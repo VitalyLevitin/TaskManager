@@ -14,9 +14,9 @@ namespace HomeAssignment.Services.AssignmentService
     public class AssignmentService : IAssignmentService
     {
         //Mock assingment
-        private static List<Assignment> assignments = new List<Assignment> {
-        new Assignment { Title = "Title", Description = "Lorem pusem"}
-        };
+        // private static List<Assignment> assignments = new List<Assignment> {
+        // new Assignment { Title = "Title", Description = "Lorem pusem"}
+        // };
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
@@ -29,28 +29,29 @@ namespace HomeAssignment.Services.AssignmentService
         {
             var serviceResponse = new ServiceResponse<List<GetAssignmentDto>>();
             Assignment assignment = _mapper.Map<Assignment>(newAssignment);
-            assignment.Id = assignments.Max(c => c.Id) + 1;
-            assignments.Add(assignment); //Add to the DB.
-            serviceResponse.Data = assignments.Select(c => _mapper.Map<GetAssignmentDto>(c)).ToList(); //Return to the client relevant info.
+            _context.Assignments.Add(assignment);
+            await _context.SaveChangesAsync();
+            serviceResponse.Data = await _context.Assignments
+                .Select(c => _mapper.Map<GetAssignmentDto>(c)).ToListAsync(); //Return to the client relevant info.
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<GetAssignmentDto>>> DeleteAssignment(int id)
         {
             ServiceResponse<List<GetAssignmentDto>> response = new ServiceResponse<List<GetAssignmentDto>>();
-
             try
             {
-                Assignment assignment = assignments.First(c => c.Id == id);
-                assignments.Remove(assignment);
-                response.Data = assignments.Select(c => _mapper.Map<GetAssignmentDto>(c)).ToList();
+                Assignment assignment = await _context.Assignments.FirstAsync(c => c.Id == id);
+                _context.Remove(assignment);
+                await _context.SaveChangesAsync();
+                response.Data = await _context.Assignments
+                    .Select(c => _mapper.Map<GetAssignmentDto>(c)).ToListAsync();
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
             }
-
             return response;
         }
 
@@ -65,21 +66,24 @@ namespace HomeAssignment.Services.AssignmentService
         public async Task<ServiceResponse<GetAssignmentDto>> GetAssignmentById(int id)
         {
             var serviceResponse = new ServiceResponse<GetAssignmentDto>();
-            var assignment = assignments.FirstOrDefault(c => c.Id == id);
-            serviceResponse.Data = _mapper.Map<GetAssignmentDto>(assignment);
+            var dbAssignment = await _context.Assignments.FirstOrDefaultAsync(c => c.Id == id);
+            serviceResponse.Data = _mapper.Map<GetAssignmentDto>(dbAssignment);
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetAssignmentDto>> UpdateAssignment(UpdateAssignmentDto updateAssignment)
         {
             ServiceResponse<GetAssignmentDto> response = new ServiceResponse<GetAssignmentDto>();
-            Assignment? existingAssignment = assignments.FirstOrDefault(c => c.Id == updateAssignment.Id);
+            Assignment? existingAssignment = await _context.Assignments
+                .FirstOrDefaultAsync(c => c.Id == updateAssignment.Id);
             if (existingAssignment == null)
             {
                 response.Success = false;
-                response.Message = $"No user with {updateAssignment.Id} found";
+                response.Message = $"No user with id {updateAssignment.Id} found";
                 return response;
             }
+
+            await _context.SaveChangesAsync();
             _mapper.Map(updateAssignment, existingAssignment);
             response.Data = _mapper.Map<GetAssignmentDto>(existingAssignment);
             return response;
