@@ -15,7 +15,9 @@ namespace HomeAssignment.Domain
         public Importance Importance { get; set; } = Importance.Low;
         public int UserId { get; set; }
         // public User? AssignedToUser { get; set; }
-        //Add time created and due date
+        public DateTime DateCreated { get;} = DateTime.Now;
+        public DateTime DueDate { get; set; } = DateTime.Now.AddDays(7);
+
 
     }
 }

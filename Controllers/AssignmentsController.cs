@@ -21,24 +21,40 @@ namespace HomeAssignment.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> Get (){
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> Get()
+        {
             return Ok(await _assignmentService.GetAllAssignments());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceResponse<GetAssignmentDto>>> GetAssignmentById (int id){
+        public async Task<ActionResult<ServiceResponse<GetAssignmentDto>>> GetAssignmentById(int id)
+        {
             return Ok(await _assignmentService.GetAssignmentById(id));
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> CreateAssignment (CreateAssignmentDto newAssignment){
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> CreateAssignment(CreateAssignmentDto newAssignment)
+        {
             return Ok(await _assignmentService.CreateAssignment(newAssignment));
         }
 
         [HttpPut]
-        public async Task<ActionResult<ServiceResponse<GetAssignmentDto>>> UpdateAssignment (UpdateAssignmentDto updatedAssignment){
+        public async Task<ActionResult<ServiceResponse<GetAssignmentDto>>> UpdateAssignment(UpdateAssignmentDto updatedAssignment)
+        {
             var response = await _assignmentService.UpdateAssignment(updatedAssignment);
-            if (response.Data == null){
+            if (response.Data == null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> Delete(int id)
+        {
+            var response = await _assignmentService.DeleteAssignment(id);
+            if (response.Data == null)
+            {
                 return NotFound(response);
             }
             return Ok(response);

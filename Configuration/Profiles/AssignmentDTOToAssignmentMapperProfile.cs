@@ -8,9 +8,9 @@ using HomeAssignment.Dtos.Assignment;
 
 namespace HomeAssignment.Configuration.Profiles
 {
-    public class AssignmentDTOToAssignmentMapperProfile : Profile
+    public class AssignmentDtoToAssignmentMapperProfile : Profile
     {
-        public AssignmentDTOToAssignmentMapperProfile()
+        public AssignmentDtoToAssignmentMapperProfile()
         {
             CreateMap<CreateAssignmentDto, Assignment>();
         }

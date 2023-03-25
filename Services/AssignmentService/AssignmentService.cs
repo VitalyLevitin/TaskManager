@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
+using HomeAssignment.Data;
 using HomeAssignment.Domain;
 using HomeAssignment.Dtos.Assignment;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeAssignment.Services.AssignmentService
 {
@@ -16,10 +18,12 @@ namespace HomeAssignment.Services.AssignmentService
         new Assignment { Title = "Title", Description = "Lorem pusem"}
         };
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public AssignmentService(IMapper mapper)
+        public AssignmentService(IMapper mapper, DataContext context)
         {
             _mapper = mapper;
+            _context = context;
         }
         public async Task<ServiceResponse<List<GetAssignmentDto>>> CreateAssignment(CreateAssignmentDto newAssignment)
         {
@@ -31,12 +35,31 @@ namespace HomeAssignment.Services.AssignmentService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<List<GetAssignmentDto>>> DeleteAssignment(int id)
+        {
+            ServiceResponse<List<GetAssignmentDto>> response = new ServiceResponse<List<GetAssignmentDto>>();
+
+            try
+            {
+                Assignment assignment = assignments.First(c => c.Id == id);
+                assignments.Remove(assignment);
+                response.Data = assignments.Select(c => _mapper.Map<GetAssignmentDto>(c)).ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
         public async Task<ServiceResponse<List<GetAssignmentDto>>> GetAllAssignments()
         {
-            return new ServiceResponse<List<GetAssignmentDto>>
-            {
-                Data = assignments.Select(c => _mapper.Map<GetAssignmentDto>(c)).ToList()
-            };
+            var response = new ServiceResponse<List<GetAssignmentDto>>();
+            var dbAssignments = await _context.Assignments.ToListAsync();
+            response.Data = dbAssignments.Select(c => _mapper.Map<GetAssignmentDto>(c)).ToList();
+            return response;
         }
 
         public async Task<ServiceResponse<GetAssignmentDto>> GetAssignmentById(int id)
@@ -50,23 +73,15 @@ namespace HomeAssignment.Services.AssignmentService
         public async Task<ServiceResponse<GetAssignmentDto>> UpdateAssignment(UpdateAssignmentDto updateAssignment)
         {
             ServiceResponse<GetAssignmentDto> response = new ServiceResponse<GetAssignmentDto>();
-            try
-            {
-                Assignment existingAssignment = assignments.FirstOrDefault(c => c.Id == updateAssignment.Id);
-                //Wasn't sure if to do this, or iterate with a foreach for each field.
-                existingAssignment.Title = updateAssignment.Title;
-                existingAssignment.Description = updateAssignment.Description;
-                existingAssignment.Status = updateAssignment.Status;
-                existingAssignment.Importance = updateAssignment.Importance;
-                existingAssignment.UserId = updateAssignment.UserId;
-                response.Data = _mapper.Map<GetAssignmentDto>(existingAssignment);
-            }
-            catch (Exception ex)
+            Assignment? existingAssignment = assignments.FirstOrDefault(c => c.Id == updateAssignment.Id);
+            if (existingAssignment == null)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = $"No user with {updateAssignment.Id} found";
                 return response;
             }
+            _mapper.Map(updateAssignment, existingAssignment);
+            response.Data = _mapper.Map<GetAssignmentDto>(existingAssignment);
             return response;
         }
 
