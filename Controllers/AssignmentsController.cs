@@ -34,5 +34,14 @@ namespace HomeAssignment.Controllers
         public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> CreateAssignment (CreateAssignmentDto newAssignment){
             return Ok(await _assignmentService.CreateAssignment(newAssignment));
         }
+
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<GetAssignmentDto>>> UpdateAssignment (UpdateAssignmentDto updatedAssignment){
+            var response = await _assignmentService.UpdateAssignment(updatedAssignment);
+            if (response.Data == null){
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
     }
 }
