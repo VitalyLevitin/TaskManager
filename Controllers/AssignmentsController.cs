@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HomeAssignment.Domain;
 using HomeAssignment.Dtos.Assignment;
 using HomeAssignment.Services.AssignmentService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeAssignment.Controllers
@@ -38,11 +39,11 @@ namespace HomeAssignment.Controllers
             return Ok(await _assignmentService.CreateAssignment(newAssignment));
         }
 
-        [HttpPut]
-        public async Task<ActionResult<ServiceResponse<GetAssignmentDto>>> UpdateAssignment(UpdateAssignmentDto updatedAssignment)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ServiceResponse<GetAssignmentDto>>> UpdateAssignment(UpdateAssignmentDto updatedAssignment, int id)
         {
-            var response = await _assignmentService.UpdateAssignment(updatedAssignment);
-            if (response.Data == null)
+            var response = await _assignmentService.UpdateAssignment(updatedAssignment, id);
+            if (response.Data is null)
             {
                 return NotFound(response);
             }
@@ -53,7 +54,7 @@ namespace HomeAssignment.Controllers
         public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> Delete(int id)
         {
             var response = await _assignmentService.DeleteAssignment(id);
-            if (response.Data == null)
+            if (response.Data is null)
             {
                 return NotFound(response);
             }

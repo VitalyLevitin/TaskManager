@@ -35,6 +35,6 @@ namespace HomeAssignment.Data
 
         public DbSet<Assignment> Assignments => Set<Assignment>();
         // public DbSet<User> Users => Set<User>();
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Users => Set<User>();
     }
 }

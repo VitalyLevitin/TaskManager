@@ -8,6 +8,9 @@ dotnet add package Microsoft.EntityFrameworkCore.Tools (?)
 dotnet add package Pomelo.EntityFrameworkCore.MySql
 dotnet tool install --global dotnet-ef
 dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.IdentityModel.Tokens 
+System.IdentityModel.Tokens.Jwt
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 6.0.4
 
 Need 2 install extensions:
 SQLTools

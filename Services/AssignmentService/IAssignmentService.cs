@@ -12,7 +12,7 @@ namespace HomeAssignment.Services.AssignmentService
         Task<ServiceResponse<List<GetAssignmentDto>>> GetAllAssignments();
         Task<ServiceResponse<GetAssignmentDto>> GetAssignmentById(int id);
         Task<ServiceResponse<List<GetAssignmentDto>>> CreateAssignment (CreateAssignmentDto newAssignment);
-        Task<ServiceResponse<GetAssignmentDto>> UpdateAssignment(UpdateAssignmentDto updateAssignment);
+        Task<ServiceResponse<GetAssignmentDto>> UpdateAssignment(UpdateAssignmentDto updateAssignment, int id);
         Task<ServiceResponse<List<GetAssignmentDto>>> DeleteAssignment (int id);
     }
 }

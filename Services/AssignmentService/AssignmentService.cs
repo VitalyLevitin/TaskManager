@@ -71,15 +71,15 @@ namespace HomeAssignment.Services.AssignmentService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetAssignmentDto>> UpdateAssignment(UpdateAssignmentDto updateAssignment)
+        public async Task<ServiceResponse<GetAssignmentDto>> UpdateAssignment(UpdateAssignmentDto updateAssignment, int id)
         {
             ServiceResponse<GetAssignmentDto> response = new ServiceResponse<GetAssignmentDto>();
             Assignment? existingAssignment = await _context.Assignments
-                .FirstOrDefaultAsync(c => c.Id == updateAssignment.Id);
-            if (existingAssignment == null)
+                .FirstOrDefaultAsync(c => c.Id == id);
+            if (existingAssignment is null)
             {
                 response.Success = false;
-                response.Message = $"No user with id {updateAssignment.Id} found";
+                response.Message = $"No user with id {id} found";
                 return response;
             }
 

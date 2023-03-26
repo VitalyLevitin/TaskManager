@@ -27,12 +27,19 @@ namespace HomeAssignment.Controllers
             try
             {
                 response = await _authRepository.Register(
-                    new User { Username = request.Username , Email = request.Email}, request.Password);
+                    new User { Username = request.Username, Email = request.Email }, request.Password);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<ServiceResponse<int>>> Login(UserLoginDto request)
+        {
+            var response = await _authRepository.Login(request.Username, request.Password);
             return response.Success ? Ok(response) : BadRequest(response);
         }
     }
