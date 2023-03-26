@@ -12,7 +12,7 @@ namespace HomeAssignment.Controllers
     public class UsersController : ControllerBase
     {
         //temp mock user
-        private static User user = new User{FirstName = "Test", LastName ="Lastname", Email = "email"};
+        private static User user = new User{Username = "Lastname", Email = "email"};
 
         //IActionResult allows to send HTTP status codes back to the client with the data
         [HttpGet]
