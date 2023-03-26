@@ -52,6 +52,12 @@ namespace HomeAssignment.Data
                 response.Message = "User already exists";
                 return response;
             }
+            if (password.Length < 3)
+            {
+                response.Success = false;
+                response.Message = "Password length needs to be at least 3 bananas";
+                return response;
+            }
 
             GeneratePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
             user.PasswordHash = passwordHash;

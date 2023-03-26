@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using HomeAssignment.Data;
@@ -20,6 +21,7 @@ namespace HomeAssignment.Services.AssignmentService
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
+
         public AssignmentService(IMapper mapper, DataContext context)
         {
             _mapper = mapper;
@@ -29,6 +31,8 @@ namespace HomeAssignment.Services.AssignmentService
         {
             var serviceResponse = new ServiceResponse<List<GetAssignmentDto>>();
             Assignment assignment = _mapper.Map<Assignment>(newAssignment);
+            User user = await _context.Users.FirstAsync(c => c.Id == newAssignment.UserId);
+            assignment.AssignedToUser = user.Username;
             _context.Assignments.Add(assignment);
             await _context.SaveChangesAsync();
             serviceResponse.Data = await _context.Assignments
@@ -88,8 +92,5 @@ namespace HomeAssignment.Services.AssignmentService
             response.Data = _mapper.Map<GetAssignmentDto>(existingAssignment);
             return response;
         }
-
-
-
     }
 }

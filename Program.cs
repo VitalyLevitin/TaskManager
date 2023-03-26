@@ -21,7 +21,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
-//Felt like this is too much so gave up on it. Too much of a hassle imo.
+//Felt like this is too much so gave up on it. Too much of a hassle
 // builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //     .AddJwtBearer(options =>
 //     {

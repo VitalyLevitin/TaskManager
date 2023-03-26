@@ -14,7 +14,7 @@ namespace HomeAssignment.Domain
         public Status Status { get; set; } = Status.Pending;
         public Importance Importance { get; set; } = Importance.Low;
         public int UserId { get; set; }
-        public User? AssignedToUser { get; set; }
+        public string? AssignedToUser { get; set; }
         public DateTime DateCreated { get;} = DateTime.Now;
         public DateTime DueDate { get; set; } = DateTime.Now.AddDays(7);
 

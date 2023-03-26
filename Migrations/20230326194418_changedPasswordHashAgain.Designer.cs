@@ -3,6 +3,7 @@ using System;
 using HomeAssignment.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeAssignment.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230326194418_changedPasswordHashAgain")]
+    partial class changedPasswordHashAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,9 +28,6 @@ namespace HomeAssignment.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("AssignedToUser")
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)");
@@ -39,7 +39,7 @@ namespace HomeAssignment.Migrations
                     b.Property<DateTime>("DueDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 4, 3, 0, 41, 53, 939, DateTimeKind.Local).AddTicks(7330));
+                        .HasDefaultValue(new DateTime(2023, 4, 2, 22, 44, 18, 520, DateTimeKind.Local).AddTicks(4325));
 
                     b.Property<int>("Importance")
                         .ValueGeneratedOnAdd()
@@ -76,9 +76,11 @@ namespace HomeAssignment.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<string>("Username")
@@ -92,11 +94,13 @@ namespace HomeAssignment.Migrations
 
             modelBuilder.Entity("HomeAssignment.Domain.Assignment", b =>
                 {
-                    b.HasOne("HomeAssignment.Domain.User", null)
+                    b.HasOne("HomeAssignment.Domain.User", "AssignedToUser")
                         .WithMany("assignments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AssignedToUser");
                 });
 
             modelBuilder.Entity("HomeAssignment.Domain.User", b =>
