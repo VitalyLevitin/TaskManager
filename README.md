@@ -16,3 +16,7 @@ Need 2 install extensions:
 SQLTools
 SQLTools MySQL/MariaDB
 
+Need 2 setup old MySql type of auth:
+CREATE USER 'sqluser'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'sqluser'@'%';
+FLUSH PRIVILEGES;

@@ -23,20 +23,6 @@ builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-//Felt like this is too much so gave up on it. Too much of a hassle
-// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//     .AddJwtBearer(options =>
-//     {
-//         options.TokenValidationParameters = new TokenValidationParameters{
-//             ValidateIssuerSigningKey = true,
-//             IssuerSigningKey = new SymmetricSecurityKey
-//                 (System.Text.Encoding.UTF8.GetBytes
-//                 (builder.Configuration.GetSection("AppSettings:Token").Value!)),
-//                 ValidateIssuer = false,
-//                 ValidateAudience = false
-//         };
-//     });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,8 +33,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// app.UseAuthentication();
 
 app.UseAuthorization();
 

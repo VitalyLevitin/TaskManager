@@ -75,6 +75,7 @@ namespace HomeAssignment.Services.UserService
             }
             _mapper.Map(updateUser, existingUser);
             await _context.SaveChangesAsync();
+            
             serviceResponse.Data = _mapper.Map<GetUserDto>(existingUser);
             return serviceResponse;
         }
