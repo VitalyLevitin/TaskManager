@@ -87,9 +87,9 @@ namespace HomeAssignment.Services.AssignmentService
                 return response;
             }
 
-            await _context.SaveChangesAsync();
             _mapper.Map(updateAssignment, existingAssignment);
             response.Data = _mapper.Map<GetAssignmentDto>(existingAssignment);
+            await _context.SaveChangesAsync();
             return response;
         }
     }

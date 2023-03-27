@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HomeAssignment.Migrations
 {
     /// <inheritdoc />
-    public partial class revertChanges : Migration
+    public partial class editUpdateAssignment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,10 +16,10 @@ namespace HomeAssignment.Migrations
                 table: "Assignments",
                 type: "datetime(6)",
                 nullable: false,
-                defaultValue: new DateTime(2023, 4, 2, 22, 45, 26, 406, DateTimeKind.Local).AddTicks(2838),
+                defaultValue: new DateTime(2023, 4, 3, 13, 21, 26, 932, DateTimeKind.Local).AddTicks(3536),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime(6)",
-                oldDefaultValue: new DateTime(2023, 4, 2, 22, 44, 18, 520, DateTimeKind.Local).AddTicks(4325));
+                oldDefaultValue: new DateTime(2023, 4, 3, 12, 51, 59, 441, DateTimeKind.Local).AddTicks(4333));
         }
 
         /// <inheritdoc />
@@ -30,10 +30,10 @@ namespace HomeAssignment.Migrations
                 table: "Assignments",
                 type: "datetime(6)",
                 nullable: false,
-                defaultValue: new DateTime(2023, 4, 2, 22, 44, 18, 520, DateTimeKind.Local).AddTicks(4325),
+                defaultValue: new DateTime(2023, 4, 3, 12, 51, 59, 441, DateTimeKind.Local).AddTicks(4333),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime(6)",
-                oldDefaultValue: new DateTime(2023, 4, 2, 22, 45, 26, 406, DateTimeKind.Local).AddTicks(2838));
+                oldDefaultValue: new DateTime(2023, 4, 3, 13, 21, 26, 932, DateTimeKind.Local).AddTicks(3536));
         }
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HomeAssignment.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class setupDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,8 +25,8 @@ namespace HomeAssignment.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PasswordHash = table.Column<byte[]>(type: "longblob", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "longblob", nullable: false)
+                    PasswordHash = table.Column<byte[]>(type: "longblob", nullable: true),
+                    PasswordSalt = table.Column<byte[]>(type: "longblob", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,9 +47,11 @@ namespace HomeAssignment.Migrations
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Importance = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     UserId = table.Column<int>(type: "int", nullable: false),
+                    AssignedToUser = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    DueDate = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2023, 4, 2, 18, 28, 35, 272, DateTimeKind.Local).AddTicks(2965))
+                    DueDate = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2023, 4, 3, 12, 51, 59, 441, DateTimeKind.Local).AddTicks(4333))
                 },
                 constraints: table =>
                 {

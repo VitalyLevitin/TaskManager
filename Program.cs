@@ -1,5 +1,6 @@
 using HomeAssignment.Data;
 using HomeAssignment.Services.AssignmentService;
+using HomeAssignment.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 //Felt like this is too much so gave up on it. Too much of a hassle
 // builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

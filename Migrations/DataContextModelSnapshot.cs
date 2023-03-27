@@ -39,7 +39,7 @@ namespace HomeAssignment.Migrations
                     b.Property<DateTime>("DueDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 4, 3, 0, 41, 53, 939, DateTimeKind.Local).AddTicks(7330));
+                        .HasDefaultValue(new DateTime(2023, 4, 3, 13, 21, 26, 932, DateTimeKind.Local).AddTicks(3536));
 
                     b.Property<int>("Importance")
                         .ValueGeneratedOnAdd()

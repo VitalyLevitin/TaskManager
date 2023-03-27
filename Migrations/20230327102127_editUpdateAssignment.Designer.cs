@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeAssignment.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230326194418_changedPasswordHashAgain")]
-    partial class changedPasswordHashAgain
+    [Migration("20230327102127_editUpdateAssignment")]
+    partial class editUpdateAssignment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,9 @@ namespace HomeAssignment.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("AssignedToUser")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)");
@@ -39,7 +42,7 @@ namespace HomeAssignment.Migrations
                     b.Property<DateTime>("DueDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 4, 2, 22, 44, 18, 520, DateTimeKind.Local).AddTicks(4325));
+                        .HasDefaultValue(new DateTime(2023, 4, 3, 13, 21, 26, 932, DateTimeKind.Local).AddTicks(3536));
 
                     b.Property<int>("Importance")
                         .ValueGeneratedOnAdd()
@@ -76,11 +79,9 @@ namespace HomeAssignment.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<string>("Username")
@@ -94,13 +95,11 @@ namespace HomeAssignment.Migrations
 
             modelBuilder.Entity("HomeAssignment.Domain.Assignment", b =>
                 {
-                    b.HasOne("HomeAssignment.Domain.User", "AssignedToUser")
+                    b.HasOne("HomeAssignment.Domain.User", null)
                         .WithMany("assignments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("AssignedToUser");
                 });
 
             modelBuilder.Entity("HomeAssignment.Domain.User", b =>
