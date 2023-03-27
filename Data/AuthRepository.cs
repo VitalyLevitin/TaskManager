@@ -31,7 +31,7 @@ namespace HomeAssignment.Data
                 response.Success = false;
                 response.Message = "User not found.";
             }
-            else if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            else if (!VerifyPasswordHash(password, user.PasswordHash!, user.PasswordSalt!))
             {
                 response.Success = false;
                 response.Message = "Wrong password.";

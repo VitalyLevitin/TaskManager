@@ -60,5 +60,48 @@ namespace HomeAssignment.Controllers
             }
             return Ok(response);
         }
+
+        [HttpGet("Status/Done")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetClosedAssignments()
+        {
+            return Ok(await _assignmentService.GetClosedAssignments());
+        }
+
+        [HttpGet("Status/Open")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetOpenAssignments()
+        {
+            return Ok(await _assignmentService.GetOpenAssignments());
+        }
+
+        [HttpGet("DueThisWeek")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetAssignmentsDueThisWeek()
+        {
+            return Ok(await _assignmentService.GetAssignmentsDueThisWeek());
+        }
+
+        [HttpGet("SortBy/{type}")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetAssignmentsSortedBy(string type)
+        {
+            var response = await _assignmentService.GetAssignmentsSortedBy(type);
+            if (response.Data is null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("Analytics/TopUser")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetUsersWithMostAssignmentsDone(DateTime start, DateTime end)
+        {
+            var response = await _assignmentService.GetUsersWithMostAssignmentsDone(start, end);
+            if (response.Data is null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+
+
     }
 }
