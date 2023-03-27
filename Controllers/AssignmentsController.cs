@@ -29,7 +29,7 @@ namespace HomeAssignment.Controllers
             _logger.LogInformation("Get all assignments was invoked");
             var response = await _assignmentService.GetAllAssignments();
             _logger.LogInformation("Get all assignments completed.");
-            return Ok();
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
