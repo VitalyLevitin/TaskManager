@@ -28,7 +28,13 @@ namespace HomeAssignment.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceResponse<GetUserDto>>> GetAssignmentById(int id)
         {
-            return Ok(await _userService.GetUserById(id));
+            var response = await _userService.GetUserById(id);
+            if (response.Data is null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+
         }
 
         [HttpPut("{id}")]

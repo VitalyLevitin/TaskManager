@@ -30,13 +30,24 @@ namespace HomeAssignment.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceResponse<GetAssignmentDto>>> GetAssignmentById(int id)
         {
-            return Ok(await _assignmentService.GetAssignmentById(id));
+            var response = await _assignmentService.GetAssignmentById(id);
+            if (response.Data is null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+
         }
 
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> CreateAssignment(CreateAssignmentDto newAssignment)
         {
-            return Ok(await _assignmentService.CreateAssignment(newAssignment));
+            var response = await _assignmentService.CreateAssignment(newAssignment);
+            if (response.Data is null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
         }
 
         [HttpPut("{id}")]
@@ -64,30 +75,40 @@ namespace HomeAssignment.Controllers
         [HttpGet("Status/Done")]
         public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetClosedAssignments()
         {
-            return Ok(await _assignmentService.GetClosedAssignments());
-        }
-
-        [HttpGet("Status/Open")]
-        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetOpenAssignments()
-        {
-            return Ok(await _assignmentService.GetOpenAssignments());
-        }
-
-        [HttpGet("DueThisWeek")]
-        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetAssignmentsDueThisWeek()
-        {
-            return Ok(await _assignmentService.GetAssignmentsDueThisWeek());
-        }
-
-        [HttpGet("SortBy/{type}")]
-        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetAssignmentsSortedBy(string type)
-        {
-            var response = await _assignmentService.GetAssignmentsSortedBy(type);
+            var response = await _assignmentService.GetClosedAssignments();
             if (response.Data is null)
             {
                 return NotFound(response);
             }
             return Ok(response);
+        }
+
+        [HttpGet("Status/Open")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetOpenAssignments()
+        {
+            var response = await _assignmentService.GetOpenAssignments();
+            if (response.Data is null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("DueThisWeek")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetAssignmentsDueThisWeek()
+        {
+            var response = await _assignmentService.GetAssignmentsDueThisWeek();
+            if (response.Data is null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("SortBy/{type}")]
+        public async Task<ActionResult<ServiceResponse<List<GetAssignmentDto>>>> GetAssignmentsSortedBy(string type)
+        {
+            return Ok(await _assignmentService.GetAssignmentsSortedBy(type));
         }
 
         [HttpGet("Analytics/TopUser")]
