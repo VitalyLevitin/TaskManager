@@ -1,4 +1,5 @@
 using HomeAssignment.Data;
+using HomeAssignment.Repository.Assignment;
 using HomeAssignment.Services.AssignmentService;
 using HomeAssignment.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,6 +23,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
 
 var app = builder.Build();
 

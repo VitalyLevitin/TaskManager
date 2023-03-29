@@ -8,11 +8,11 @@ using HomeAssignment.Dtos.Assignment;
 
 namespace HomeAssignment.Configuration.Profiles
 {
-    public class UpdateAssignmentDtoToAssignment : Profile
+    public class GetAssignmentDtoToAssignment : Profile
     {
-        public UpdateAssignmentDtoToAssignment()
+        public GetAssignmentDtoToAssignment()
         {
-            CreateMap<UpdateAssignmentDto, Assignment>();
+            CreateMap<GetAssignmentDto, Assignment>();
         }
     }
 }

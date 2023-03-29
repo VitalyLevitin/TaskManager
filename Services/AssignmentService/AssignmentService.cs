@@ -10,6 +10,7 @@ using HomeAssignment.Domain;
 using HomeAssignment.Domain.Enums;
 using HomeAssignment.Dtos.Analytics;
 using HomeAssignment.Dtos.Assignment;
+using HomeAssignment.Repository.Assignment;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomeAssignment.Services.AssignmentService
@@ -18,12 +19,13 @@ namespace HomeAssignment.Services.AssignmentService
     {
         private readonly IMapper _mapper;
         private readonly DataContext _context;
+        private readonly IAssignmentRepository _assignmentRepository;
 
-
-        public AssignmentService(IMapper mapper, DataContext context)
+        public AssignmentService(IMapper mapper, DataContext context, IAssignmentRepository assignmentRepository)
         {
             _mapper = mapper;
             _context = context;
+            _assignmentRepository = assignmentRepository;
         }
         public async Task<ServiceResponse<List<GetAssignmentDto>>> CreateAssignment(CreateAssignmentDto newAssignment)
         {
@@ -38,14 +40,10 @@ namespace HomeAssignment.Services.AssignmentService
             }
 
             //Creation of the new assignment
-            Assignment assignment = _mapper.Map<Assignment>(newAssignment);
-            assignment.AssignedToUser = user.Username;
-            _context.Assignments.Add(assignment);
-            await _context.SaveChangesAsync();
+            await _assignmentRepository.Create(newAssignment, user);
 
             // Return all assignments as response
-            serviceResponse.Data = await _context.Assignments
-                .Select(c => _mapper.Map<GetAssignmentDto>(c)).ToListAsync();
+            serviceResponse.Data = await _assignmentRepository.GetAll();
             return serviceResponse;
         }
 
@@ -59,35 +57,26 @@ namespace HomeAssignment.Services.AssignmentService
                 serviceResponse.Message = "Invalid assignment ID";
                 return serviceResponse;
             }
-            try
-            {
-                var assignment = await _context.Assignments.FirstOrDefaultAsync(c => c.Id == id);
-                if (assignment == null)
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = $"No assignment with id {id} found.";
-                    return serviceResponse;
-                }
 
-                _context.Remove(assignment);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
+            var assignment = _assignmentRepository.GetById(id);
+            if (assignment == null)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
+                serviceResponse.Message = $"No assignment with id {id} found.";
+                return serviceResponse;
             }
+
+            await _assignmentRepository.Delete(assignment);
+
             //Return a list of the assignments after deletion.
-            serviceResponse.Data = await _context.Assignments
-                .Select(c => _mapper.Map<GetAssignmentDto>(c)).ToListAsync();
+            serviceResponse.Data = await _assignmentRepository.GetAll();
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<GetAssignmentDto>>> GetAllAssignments()
         {
             var serviceResponse = new ServiceResponse<List<GetAssignmentDto>>();
-            var dbAssignments = await _context.Assignments.ToListAsync();
-            serviceResponse.Data = dbAssignments.Select(c => _mapper.Map<GetAssignmentDto>(c)).ToList();
+            serviceResponse.Data = await _assignmentRepository.GetAll();
             return serviceResponse;
         }
 
@@ -101,7 +90,7 @@ namespace HomeAssignment.Services.AssignmentService
                 serviceResponse.Message = "Invalid assignment ID";
                 return serviceResponse;
             }
-            var dbAssignment = await _context.Assignments.FirstOrDefaultAsync(c => c.Id == id);
+            var dbAssignment = await _assignmentRepository.GetById(id);
 
             if (dbAssignment == null)
             {
@@ -109,18 +98,14 @@ namespace HomeAssignment.Services.AssignmentService
                 serviceResponse.Message = $"No assignment found with ID {id}";
                 return serviceResponse;
             }
-            serviceResponse.Data = _mapper.Map<GetAssignmentDto>(dbAssignment);
+            serviceResponse.Data = dbAssignment;
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<GetAssignmentDto>>> GetClosedAssignments()
         {
             var serviceResponse = new ServiceResponse<List<GetAssignmentDto>>();
-            var dbAssignments = await _context.Assignments.ToListAsync();
-            var pendingAssignments = dbAssignments
-                .Where(a => a.Status == Status.Done)
-                .Select(a => _mapper.Map<GetAssignmentDto>(a))
-                .ToList();
+            var pendingAssignments = await _assignmentRepository.GetClosed();
 
             if (pendingAssignments is null)
             {
@@ -135,19 +120,7 @@ namespace HomeAssignment.Services.AssignmentService
         public async Task<ServiceResponse<List<GetAssignmentDto>>> GetOpenAssignments()
         {
             var serviceResponse = new ServiceResponse<List<GetAssignmentDto>>();
-            var dbAssignments = await _context.Assignments.ToListAsync();
-
-            //Checking if there's any assignments in general.
-            if (dbAssignments is null)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = "No assignments found.";
-                return serviceResponse;
-            }
-            var openAssignments = dbAssignments
-                .Where(a => a.Status != Status.Done)
-                .Select(a => _mapper.Map<GetAssignmentDto>(a))
-                .ToList();
+            var openAssignments = await _assignmentRepository.GetOpen(); //Status != Done
 
             //Checking if there's any open assignments
             if (openAssignments is null)
@@ -170,10 +143,7 @@ namespace HomeAssignment.Services.AssignmentService
             var endDate = currentDate.AddDays(7);
 
             // Filter assignments by due date
-            var assignmentsDueThisWeek = dbAssignments
-                .Where(a => a.DueDate >= currentDate && a.DueDate <= endDate)
-                .Select(a => _mapper.Map<GetAssignmentDto>(a))
-                .ToList();
+            var assignmentsDueThisWeek = await _assignmentRepository.GetDueThisWeek(currentDate, endDate);
 
             //Check if there's any assignments due in the upcoming week.
             if (assignmentsDueThisWeek is null || !assignmentsDueThisWeek.Any())
@@ -198,47 +168,41 @@ namespace HomeAssignment.Services.AssignmentService
                 serviceResponse.Message = "Invalid sort by parameter";
                 return serviceResponse;
             }
-            var dbAssignments = await _context.Assignments.ToListAsync();
 
+            var dbAssignments = await _assignmentRepository.GetAll();
             // Sort assignments by the specified property
             switch (sortBy.ToLower())
             {
                 case "date":
-                    dbAssignments = dbAssignments.OrderBy(a => a.DueDate).ToList();
+                    dbAssignments = await _assignmentRepository.GetAssignmentsSortedByDueDate();
                     break;
                 case "status":
-                    dbAssignments = dbAssignments.OrderByDescending(a => a.Status).ToList();
+                    dbAssignments = await _assignmentRepository.GetAssignmentsSortedByStatus();
                     break;
                 case "importance":
-                    dbAssignments = dbAssignments.OrderByDescending(a => a.Importance).ToList();
-                    break;
-                default:
+                    dbAssignments = await _assignmentRepository.GetAssignmentsSortedByImportance();
                     break;
             }
-            // Map assignments to DTOs
-            var assignments = dbAssignments.Select(a => _mapper.Map<GetAssignmentDto>(a)).ToList();
 
-            serviceResponse.Data = assignments;
+            serviceResponse.Data = dbAssignments;
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetAssignmentDto>> UpdateAssignment(UpdateAssignmentDto updateAssignment, int id)
         {
             ServiceResponse<GetAssignmentDto> serviceResponse = new ServiceResponse<GetAssignmentDto>();
-            var existingAssignment = await _context.Assignments
-                .FirstOrDefaultAsync(c => c.Id == id);
 
             //Check if there's an assignment with the ID provided.
-            if (existingAssignment is null)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = $"No assignment with id {id} found";
-                return serviceResponse;
-            }
+            // if (existingAssignment is null)
+            // {
+            //     serviceResponse.Success = false;
+            //     serviceResponse.Message = $"No assignment with id {id} found";
+            //     return serviceResponse;
+            // }
             if (updateAssignment.UserId <= 0)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = "Invalid ID";
+                serviceResponse.Message = "Invalid user ID";
                 return serviceResponse;
             }
             //Check to see if the user exists in the db (Avoiding a very high random id input)
@@ -249,10 +213,8 @@ namespace HomeAssignment.Services.AssignmentService
                 serviceResponse.Message = $"No user with id {updateAssignment.UserId} found";
                 return serviceResponse;
             }
-
-            _mapper.Map(updateAssignment, existingAssignment);
-            serviceResponse.Data = _mapper.Map<GetAssignmentDto>(existingAssignment);
-            await _context.SaveChangesAsync();
+            serviceResponse.Success = true;
+            serviceResponse.Message = $"Updated user with id {updateAssignment.UserId}";
             return serviceResponse;
         }
 
